@@ -7,32 +7,32 @@
 
 SPEC 帶出以下限制，技術選型依此倒推：
 
-| # | 限制 | 來源 |
-|---|---|---|
-| C1 | 前端必須是 web app，執行於 LINE 內建瀏覽器 | LINE MINI App |
-| C2 | 需要後端：驗證 ID token、儲存資料、webhook、推播 | US-01、US-07 |
-| C3 | 需要每日排程 | US-07 |
-| C4 | 關聯式資料，依賴 check constraint、partial unique index、陣列欄位 | SPEC 第 6 節 |
-| C5 | 日期計算是核心邏輯，必須是可測試的純函式 | SPEC 5.2–5.5、7.4 |
-| C6 | 單人開發與維護，免費或接近免費 | 個人專案 |
-| C7 | 與 AI 協作，錯誤要能被機器自動擋下 | 開發方式 |
+| #   | 限制                                                              | 來源              |
+| --- | ----------------------------------------------------------------- | ----------------- |
+| C1  | 前端必須是 web app，執行於 LINE 內建瀏覽器                        | LINE MINI App     |
+| C2  | 需要後端：驗證 ID token、儲存資料、webhook、推播                  | US-01、US-07      |
+| C3  | 需要每日排程                                                      | US-07             |
+| C4  | 關聯式資料，依賴 check constraint、partial unique index、陣列欄位 | SPEC 第 6 節      |
+| C5  | 日期計算是核心邏輯，必須是可測試的純函式                          | SPEC 5.2–5.5、7.4 |
+| C6  | 單人開發與維護，免費或接近免費                                    | 個人專案          |
+| C7  | 與 AI 協作，錯誤要能被機器自動擋下                                | 開發方式          |
 
 ## 決定
 
-| 層級 | 選擇 |
-|---|---|
-| 語言 | TypeScript（strict） |
-| 框架 | Next.js（App Router） |
-| LINE | LINE MINI App channel（未驗證 MINI App）＋ Messaging API channel，兩者在同一個 Provider |
-| 資料庫 | PostgreSQL，主機為 Neon |
-| ORM | Drizzle |
-| 驗證 | Zod，前後端共用 |
-| 日期 | 自訂 `PlainDate` 純函式，`date-fns` 輔助 |
-| UI | Tailwind CSS |
-| 測試 | Vitest；整合測試連線至真實 Postgres（Docker） |
-| 品質 | ESLint、Prettier、`tsc --noEmit` |
-| CI | GitHub Actions |
-| 部署 | Vercel（Hobby）＋ Vercel Cron |
+| 層級   | 選擇                                                                                    |
+| ------ | --------------------------------------------------------------------------------------- |
+| 語言   | TypeScript（strict）                                                                    |
+| 框架   | Next.js（App Router）                                                                   |
+| LINE   | LINE MINI App channel（未驗證 MINI App）＋ Messaging API channel，兩者在同一個 Provider |
+| 資料庫 | PostgreSQL，主機為 Neon                                                                 |
+| ORM    | Drizzle                                                                                 |
+| 驗證   | Zod，前後端共用                                                                         |
+| 日期   | 自訂 `PlainDate` 純函式，`date-fns` 輔助                                                |
+| UI     | Tailwind CSS                                                                            |
+| 測試   | Vitest；整合測試連線至真實 Postgres（Docker）                                           |
+| 品質   | ESLint、Prettier、`tsc --noEmit`                                                        |
+| CI     | GitHub Actions                                                                          |
+| 部署   | Vercel（Hobby）＋ Vercel Cron                                                           |
 
 ## 理由與被否決的方案
 

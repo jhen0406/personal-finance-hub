@@ -6,6 +6,9 @@
 
 - **需求**：實作或修改任何功能、驗證規則、計算邏輯之前，先讀 `docs/SPEC.md` 中對應的 US 與第 5 節業務規則。SPEC 是唯一的需求來源，與 README 衝突時以 SPEC 為準。需求不明確時，停下來問我，不要自行假設。
 - **技術決策**：新增依賴、更換工具、或改變架構之前，先讀 `docs/adr/`。做出新的技術決策時，新增一份編號遞增的 ADR。
+- **Next.js**：本專案的 Next.js 版本比你的訓練資料新。寫任何 Next.js 程式碼（頁面、route handler、設定、快取）之前，先讀 `node_modules/next/dist/docs/` 中對應的指南。
+
+@AGENTS.md
 
 ## 技術棧
 
@@ -44,10 +47,21 @@ src/app/      Next.js 頁面與 route handler：接收請求、呼叫 service、
 ## 開發流程
 
 1. **計畫**：會動到超過一個檔案的工作，先列出計畫，經我同意後再動手。
-2. **測試先行**：`src/domain/` 的邏輯先寫測試，確認測試是 red，再實作到 green。測試案例要涵蓋 SPEC 5.6 ⚠️ 列出的邊界情況。
-3. **整合測試**：涉及資料庫 constraint 或 repository 的行為，用連到本機 Docker Postgres 的整合測試驗證。
-4. **完成的定義**：lint、型別檢查、單元測試、整合測試全部通過；新的行為都有對應的測試；回報時列出這次涵蓋了 SPEC 的哪些 AC。
+2. **測試先行**：`src/domain/` 的邏輯先寫測試，確認測試是 red，再實作到 green。測試案例要涵蓋 SPEC 5.6 ⚠️ 列出的邊界情況。單元測試命名為 `*.test.ts`，放在被測檔案旁邊。
+3. **整合測試**：涉及資料庫 constraint 或 repository 的行為，用連到本機 Docker Postgres 的整合測試驗證。命名為 `*.int.test.ts`，在檔案開頭呼叫 `setupTestDb()`（`test/integration/db.ts`），每個測試開始前資料表會被清空。
+4. **完成的定義**：`npm run check` 全部通過（格式、lint、型別檢查、單元測試、整合測試；整合測試需要先 `npm run db:up`）；新的行為都有對應的測試；回報時列出這次涵蓋了 SPEC 的哪些 AC。
 5. **Commit**：一個 commit 只做一件事，訊息使用 Conventional Commits 格式（`feat:`、`fix:`、`test:`、`docs:`、`refactor:`、`chore:`）。
+
+## Git 分支流程
+
+- **`main` 是正式版本**：Vercel 從 `main` 部署正式環境，`main` 上的每個 commit 都必須可以直接上線。
+- **所有變更都在分支上進行**：開始工作前，從最新的 `main` 建立分支，命名為 `<type>/<簡短描述>`（type 與 Conventional Commits 相同，例如 `feat/line-login`、`fix/due-date-month-end`）。發現自己在 `main` 上時，先建立分支再修改。
+- **一個分支只做一件事**：通常對應 SPEC 的一個 US 或一個修正。
+- **透過 PR 合併回 `main`**，合併條件：
+  1. CI 全部通過
+  2. 在 Vercel 預覽環境實際測試過；涉及 MINI App 的功能，要在手機的 LINE 裡測試
+  3. 我 review 過 diff
+- **PR 由我合併**，合併方式為 squash merge。你負責開 PR，並在描述中列出涵蓋的 SPEC AC 與測試方式。
 
 ## 需要先問我的事
 
